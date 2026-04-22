@@ -1,0 +1,62 @@
+[
+  {
+    "sample_id": "ragtruth_5725",
+    "label": 0,
+    "pred_label": 1,
+    "prob_hallucinated": 0.8585394755409634,
+    "task_type": "Data2txt",
+    "question": "Instruction: Write an objective overview about the following local business based only on the provided structured data in the JSON format. You should include details and cover the information mentioned in the customers' review. The overview should be 100 - 200 words. Don't make up information. Structured data: {'name': 'Mels Place', 'address': '6 De La Guerra Pl', 'city': 'Santa Barbara', 'state': 'CA', 'categories': 'Bars, Nightlife', 'hours': None, 'attributes': {'BusinessParking': None, 'RestaurantsReservations': None, 'OutdoorSeating': True, 'WiFi': None, 'RestaurantsTakeOut': None, 'RestaurantsGoodForGroups': True, 'Music': None, 'Ambience': {'romantic': False, 'intimate': False, 'touristy': False, 'hipster': False, 'divey': False, 'classy': False, 'trendy': False, 'upscale': False, 'casual': False}}, 'business_stars': 3.5, 'review_info': [{'review_stars': 5.0, 'review_date': '2012-01-15 16:08:07', 'review_text': 'Nestled off the main strip known as state street on West Carrillo, not far from the 101 freeway at all, this spot gives you a welcoming... you are at your place, kind of feel. Perhaps you can call it the CHEERS of Santa Barbara. The regular folks that come through will tell you that.\\n\\nI was introduced to this place last night while checking things out around town. It\\'s very clean, lighting is balanced and the mood is one which simply says \"take a load off your shoulders and have a good time.\" The staff is extremely accommodating. Fran has worked with the establishment for a couple decades now and she\\'s the epitome of the reason why Mel\\'s Place has been around since 1963. \\n\\nMy small clan shot the breeze with her for a while... we are on a call her by her handle basis now (visit this place and learn what it is for yourself). She filled us in on the history of the joint. She even cracked open the billiard room for us to squeeze in a game.\\n\\nThe game room features darts, pool among other things like a jukebox you can DJ for a reasonable cost. All in excellent condition.The menu has eats and drinks that are reasonably priced.\\n\\nI read that this spot is closed and no longer in business. Visit and see for yourself that such is far from the truth. You can check out their website to learn more about it: www.melslounge.com\\n\\nAfter your visit, I\\'m sure you\\'ll have some nice things to put up on yelp about them too.'}, {'review_stars': 4.0, 'review_date': '2010-12-15 16:29:47', 'review_text': \"It's great that Mel's is back in a new place. But I still miss the dark little bar.\"}, {'review_stars': 3.0, 'review_date': '2008-07-16 06:14:08', 'review_text': \"Super small local place to stop for a drink or two... or three. ;-)\\n\\nCost to worth it ratio: 4\\n\\nHighlight:\\n- Dive bar in the middle of the trendy pedestrian mall in downtown Santa Barbara. Liked the juxtaposition of the overall location with nice stores and bars and this actual tiny dive bar hidden in between it all.\\n- Local's spot: because it's not like the others, a lot of locals hang here. Nice to get out of the touristy joints.\\n- Strong drinks that don't break the bank: you can always count on this from dive bars! The Captain and Cokes we ordered were mostly clear with just a tinge of caramel color. ;-)\\n- Mid daytime excitement: you get quite the characters to people watch and interact with--from hard core drinkers to free-loving travelers to a couple dancing happily like nobody's watching to jukebox music. \\n\\nLowlights (my flip side to highlights):\\n- Really hot inside: small place with limited air flow\\n- If you're visiting the city probably wouldn't spend tons of time here, as a lot of places have patios, etc to enjoy the perfect Santa Barbara weather\\n\\nI'd come back for a few drinks for a change of Santa Barbara pace. And my friends who live here like it and I'm usually with them.\"}]} Overview:",
+    "answer": "Mels Place is a local business located at 6 De La Guerra Pl in Santa Barbara, CA. It falls under the categories of bars and nightlife. The business has been around since 1963 and is still operational, despite rumors of closure. The establishment offers a welcoming and relaxed atmosphere, allowing customers to take a load off and have a good time. The staff, particularly Fran, who has been with the establishment for decades, is known for their extremely accommodating nature. The business features a game room with pool, darts, and a jukebox that customers can DJ for a reasonable cost. The game room is well-maintained and in excellent condition. The menu offers reasonably priced drinks and eats. Customers appreciate Mels Place for being a small local spot where they can stop for a drink or two. It is seen as a dive bar hidden in the trendy pedestrian mall of downtown Santa Barbara, providing a unique and juxtaposing experience. Locals frequent the establishment, offering a break from the touristy joints in the area. Some highlights of Mels Place include strong drinks that don't break the bank, the presence of interesting characters for people-watching, and mid-daytime excitement. However, the limited airflow inside the small establishment can make it uncomfortable on hot days. Overall, Mels Place provides a pleasant and enjoyable experience for those seeking a change of pace in Santa Barbara.",
+    "hallucination_spans": [],
+    "cosine_drift": 0.2914934754371643,
+    "mahalanobis_distance": 52.4918212890625,
+    "pca_deviation": 1387.4349365234375,
+    "logit_lens_divergence": 0.5420289635658264,
+    "attention_entropy": 2.6965433061122894,
+    "explanation": "False positive on Data2txt: retrieval-faithful content still looks representation-distant. Mahalanobis=52.49 and PCA=1387.43 are elevated, which suggests stylistic or compression shift rather than true hallucination."
+  },
+  {
+    "sample_id": "ragtruth_12307",
+    "label": 1,
+    "pred_label": 0,
+    "prob_hallucinated": 0.05841484792745618,
+    "task_type": "QA",
+    "question": "Briefly answer the following question: do not turn off target tizen Bear in mind that your response should be strictly based on the following three passages: passage 1:eflash an original rom of android to the gear. Using odin and looking up the last version of Android for the gear. UK is btu I used BTU-V700XXUBNC1 (android). Then ignore the tizen link on here and download the one that in BTU-V700XXUCNE9 NOT THE ONE ENDING NF1 (tizen). I then put the gear into download mode.Hold power, wait till the flash screen and then click the button a few times.Press till download and hold on download for about 5 secs.Then load up odin.flash an original rom of android to the gear. Using odin and looking up the last version of Android for the gear. UK is btu I used BTU-V700XXUBNC1 (android). Then ignore the tizen link on here and download the one that in BTU-V700XXUCNE9 NOT THE ONE ENDING NF1 (tizen). I then put the gear into download mode. passage 2:6. Put the gear into bootloader mode. To do this, turn off the device. Then turn on and keep the power button held in until it says Gear Rebooting.... Once it says this keep pressing the power button until the bootloader menu is displayed.t this point, press the power button once to highlight Download then press and hold the power button one last time to select it. This should enter downloading mode, where it warns to not turn off the target. 7. Put the gear into the charging device and plug into your PC. passage 3:Having a battery charge issue so I turned my phone off. When I turned it back on I got the Downloading. Do not turn off target!! message and it stayed that way for what seemed like forever. When I tried to restart it, same message. Took battery out, popped it back in. Same message.Then, I tried this: Took out the SIM card.riginally Posted by omsuae [ Login above or register to see download links. ] Using Kies, my Gear device is stuck on stuck on Downloading-Do not turn off target! In case the passages do not contain the necessary information to answer the question, please reply with: \"Unable to answer based on given passages.\" output:",
+    "answer": "Based on the given passages, the phrase \"do not turn off target tizen\" is mentioned in passage 2.",
+    "hallucination_spans": [
+      {
+        "start": 0,
+        "end": 97,
+        "label": "unsupported"
+      }
+    ],
+    "cosine_drift": 0.20649997889995575,
+    "mahalanobis_distance": 265.27618408203125,
+    "pca_deviation": 24815.458984375,
+    "logit_lens_divergence": 0.4888888895511627,
+    "attention_entropy": 2.945660710334778,
+    "explanation": "False negative on QA: the model assigns low hallucination probability despite non-empty hallucination spans. Logit-lens divergence=0.489 is modest, which suggests the wrong answer stays fluent and internally self-consistent, so the detector misses it."
+  },
+  {
+    "sample_id": "ragtruth_16451",
+    "label": 1,
+    "pred_label": 0,
+    "prob_hallucinated": 0.0703198954514266,
+    "task_type": "QA",
+    "question": "Briefly answer the following question: where do you claim the simplified home office deduction go on 1040 Bear in mind that your response should be strictly based on the following three passages: passage 1:If you use part of your home for business, you may be able to deduct expenses for the business use of your home. The home office deduction is available for homeowners and renters, and applies to all types of homes. passage 2:Some of those concerns, however, have been eased, thanks to the simplified home office deduction. Instead of filling out the 43-line Form 8829 to claim a deduction for your home office, you have the option to claim up to $1,500 by using a significantly streamlined work sheet. passage 3:In a rare move to simplify life for taxpayers, the IRS created a new simplified optional home office deduction. The simplified home office deduction can be claimed starting in tax year 2013. Using the optional method, you simply deduct $5 for every square foot of your home office. In case the passages do not contain the necessary information to answer the question, please reply with: \"Unable to answer based on given passages.\" output:",
+    "answer": "The simplified home office deduction can be claimed on Line 29 of Schedule C (Form 1040) as an other expense.",
+    "hallucination_spans": [
+      {
+        "start": 0,
+        "end": 109,
+        "label": "unsupported"
+      }
+    ],
+    "cosine_drift": 0.21771247684955597,
+    "mahalanobis_distance": 256.9830322265625,
+    "pca_deviation": 21468.048828125,
+    "logit_lens_divergence": 0.4866666793823242,
+    "attention_entropy": 2.7409697771072388,
+    "explanation": "False negative on QA: the model assigns low hallucination probability despite non-empty hallucination spans. Logit-lens divergence=0.487 is modest, which suggests the wrong answer stays fluent and internally self-consistent, so the detector misses it."
+  }
+]

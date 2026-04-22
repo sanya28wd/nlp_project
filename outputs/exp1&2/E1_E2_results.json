@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "source_metrics_dir": "/Users/sanyawadhawan/Desktop/projects/NLP /outputs/person2/metrics_full_gpt2medium_logitlens",
+    "source_splits_dir": "/Users/sanyawadhawan/Desktop/projects/NLP /artifacts/person1_ragtruth_full_gpt2medium_pt/splits",
+    "artifact_count": 17790
+  },
+  "e1_oriented_test_metrics": {
+    "cos": {
+      "AUROC": 0.5384202436880048,
+      "F1_median": 0.47187373532982596
+    },
+    "mah": {
+      "AUROC": 0.6916307396270147,
+      "F1_median": 0.6159449615540267
+    },
+    "pca": {
+      "AUROC": 0.6909809354548829,
+      "F1_median": 0.613516794819911
+    },
+    "ll": {
+      "AUROC": 0.6535514143250931,
+      "F1_median": 0.6013759611493322
+    },
+    "comp": {
+      "AUROC": 0.6179240129526107,
+      "F1_median": 0.5681910157830837
+    }
+  },
+  "e2_learned_composite": {
+    "method": "standardize + logistic_regression(train+val) -> test",
+    "features": [
+      "cosine_drift",
+      "mahalanobis_distance",
+      "pca_deviation",
+      "logit_lens_divergence"
+    ],
+    "AUROC": 0.7001276727915667,
+    "F1@0.5": 0.6000974184120799,
+    "weights": {
+      "cos": -0.3528537778528979,
+      "mah": 1.6409868339906883,
+      "pca": 0.2830757683136735,
+      "ll": 0.30004845391591567
+    }
+  }
+}

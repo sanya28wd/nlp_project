@@ -1,0 +1,24 @@
+{
+  "halueval_samples": 697,
+  "halueval_positive_rate": 0.42898134863701576,
+  "included_tasks": [
+    "dialogue",
+    "general",
+    "qa",
+    "summarization"
+  ],
+  "task_counts": {
+    "dialogue": 200,
+    "general": 99,
+    "qa": 200,
+    "summarization": 198
+  },
+  "skipped_task_counts": {},
+  "source_train_samples": 12450,
+  "source_val_samples": 2664,
+  "source_test_samples": 2676,
+  "halueval_composite_auroc": 0.5834817902220131,
+  "most_brittle_metric": "Logit lens divergence",
+  "most_brittle_drop": 0.19795823101724958,
+  "spearman_halueval_composite": -0.130160247120075
+}

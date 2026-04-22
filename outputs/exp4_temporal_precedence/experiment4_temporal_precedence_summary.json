@@ -1,0 +1,60 @@
+{
+  "experiment": "Experiment 4 - Temporal precedence",
+  "positions": [
+    "t-3",
+    "t-2",
+    "t-1",
+    "t (onset)",
+    "t+1"
+  ],
+  "n_artifacts_used": 2676,
+  "note": "Logit lens computed exactly from full-vocabulary logits via model forward pass.",
+  "mann_whitney": {
+    "cosine": {
+      "peak_pre_offset": -3,
+      "global_peak_offset": 0,
+      "u_stat": 3546968.5,
+      "p_value": 0.7234346509029385,
+      "n_pre": 2676,
+      "n_onset": 2676
+    },
+    "mahalanobis": {
+      "peak_pre_offset": -2,
+      "global_peak_offset": -2,
+      "u_stat": 3650614.0,
+      "p_value": 0.10735033527738186,
+      "n_pre": 2676,
+      "n_onset": 2676
+    },
+    "logit_lens": {
+      "peak_pre_offset": -2,
+      "global_peak_offset": -2,
+      "u_stat": 3647342.0,
+      "p_value": 0.11843410097678947,
+      "n_pre": 2676,
+      "n_onset": 2676
+    },
+    "pca": {
+      "peak_pre_offset": -2,
+      "global_peak_offset": 1,
+      "u_stat": 3533612.0,
+      "p_value": 0.7965593511679345,
+      "n_pre": 2676,
+      "n_onset": 2676
+    },
+    "cie": {
+      "peak_pre_offset": -2,
+      "global_peak_offset": -2,
+      "u_stat": 3648679.0,
+      "p_value": 0.1138110718503037,
+      "n_pre": 2676,
+      "n_onset": 2676
+    }
+  },
+  "outputs": {
+    "table_csv": "outputs/exp4_temporal_precedence/experiment4_temporal_precedence_table.csv",
+    "lineplot_png": "outputs/exp4_temporal_precedence/experiment4_temporal_precedence_lineplot.png",
+    "normalized_lineplot_png": "outputs/exp4_temporal_precedence/experiment4_temporal_precedence_lineplot_normalized.png",
+    "mann_whitney_csv": "outputs/exp4_temporal_precedence/experiment4_mann_whitney_tests.csv"
+  }
+}

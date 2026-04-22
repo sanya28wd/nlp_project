@@ -1,0 +1,6 @@
+Metric,Peak pre-onset,Global peak,Mann-Whitney U,p-value
+Cosine drift,t-3,t (onset),3546968.5,0.7234
+Mahalanobis,t-2,t-2,3650614.0,0.1074
+Logit lens,t-2,t-2,3647342.0,0.1184
+PCA dev.,t-2,t+1,3533612.0,0.7966
+CIE,t-2,t-2,3648679.0,0.1138

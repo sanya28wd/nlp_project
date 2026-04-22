@@ -1,0 +1,19 @@
+{
+  "primary_reported_auroc": 0.7224043440781733,
+  "ragtruth_reporting_auroc": 0.7224043440781733,
+  "earlier_e1_e2_auroc": 0.7001276727915667,
+  "primary_reported_model": "CIE full composite (Exp1/2 final table)",
+  "primary_reported_features_note": "Selected by leakage-safe train/val selection and evaluated on test in build_exp12_table.py",
+  "reporting_note": "Use ragtruth_reporting_auroc (0.7224) as the single RAGTruth headline AUROC in submission text/slides. Keep earlier_e1_e2_auroc (0.7001) as legacy traceability value.",
+  "recommended_report_numbers": {
+    "best_auroc": 0.7224043440781733,
+    "halueval_transfer_auroc": 0.6662956790192504,
+    "attention_entropy_baseline_auroc": 0.6661230658172689
+  },
+  "provenance": {
+    "exp1_exp2_table_file": "outputs/exp1&2/exp1_exp2_table_final.csv",
+    "earlier_e1_e2_result_file": "outputs/exp1&2/E1_E2_results.json",
+    "exp6_8_result_file": "outputs/exp6_8_analysis/experiment8_sota_gap_table.csv",
+    "supporting_report_file": "outputs/exp6_8_analysis/experiment6_8_report.md"
+  }
+}

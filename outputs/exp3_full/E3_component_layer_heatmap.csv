@@ -1,0 +1,13 @@
+component_key,component,layer,cie_faithful_to_hallucinated
+early_attn_heads,Early attn heads (1–25%),0,1.6198555628458658e-05
+early_attn_heads,Early attn heads (1–25%),1,
+early_attn_heads,Early attn heads (1–25%),2,
+mid_ffn_layers,Mid FFN layers (26–75%),0,0.002793593539132012
+mid_ffn_layers,Mid FFN layers (26–75%),1,0.002793593539132012
+mid_ffn_layers,Mid FFN layers (26–75%),2,0.002793593539132012
+late_ffn_layers,Late FFN layers (76–100%),0,
+late_ffn_layers,Late FFN layers (76–100%),1,
+late_ffn_layers,Late FFN layers (76–100%),2,0.004787151018778483
+copying_heads,Copying heads (last 25%),0,
+copying_heads,Copying heads (last 25%),1,
+copying_heads,Copying heads (last 25%),2,0.0007008691628774007

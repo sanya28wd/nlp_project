@@ -1,0 +1,13 @@
+metric,layer,auroc,is_top3
+Cosine drift,0,0.5370010851043262,True
+Cosine drift,1,0.5384997531773765,True
+Cosine drift,2,0.5931939877097778,True
+Mahalanobis,0,0.6850437502395296,True
+Mahalanobis,1,0.6924490009546858,True
+Mahalanobis,2,0.6890890100153355,True
+PCA deviation,0,0.6702755776021196,True
+PCA deviation,1,0.6872331212508273,True
+PCA deviation,2,0.692514210176185,True
+Logit lens,0,0.5024416277365708,True
+Logit lens,1,0.6640080561989088,True
+Logit lens,2,0.6342480547345613,True

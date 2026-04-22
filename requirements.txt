@@ -1,0 +1,13 @@
+# Python version
+# Requires Python >=3.12
+
+# Person 1 pipeline (HF provider path)
+transformers>=4.41.0; python_version >= "3.12"
+torch>=2.2.0; python_version >= "3.12"
+
+# RAGTruth baseline (bundled reference code under RAGTruth-main/baseline)
+huggingface_hub>=0.23.0; python_version >= "3.12"
+pandas>=2.2.0; python_version >= "3.12"
+peft>=0.11.0; python_version >= "3.12"
+scikit-learn>=1.5.0; python_version >= "3.12"
+tqdm>=4.66.0; python_version >= "3.12"

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "model_name": "gpt2-medium",
+    "device": "mps",
+    "max_seq_len": 512,
+    "layers": "last4",
+    "limit_per_split": 0,
+    "scores_csv": "outputs/exp1&2/attention_entropy_scores.csv"
+  },
+  "attention_entropy_baseline": {
+    "AUROC": 0.6661230658172689,
+    "F1": 0.6070416835289356,
+    "Spearman": 0.28433636089534103,
+    "ECE": 0.006601431619133586,
+    "train_corr": -0.26909454221996526,
+    "n_train": 12450,
+    "n_test": 2676
+  }
+}

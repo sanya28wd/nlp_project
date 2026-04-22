@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: nlp
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12
+Requires-Dist: django>=6.0.3
+Requires-Dist: matplotlib>=3.10.0
+Requires-Dist: numpy>=2.4.0
+Requires-Dist: pandas>=3.0.0
+Requires-Dist: scikit-learn>=1.8.0
+Requires-Dist: scipy>=1.17.0
+Requires-Dist: torch>=2.11.0

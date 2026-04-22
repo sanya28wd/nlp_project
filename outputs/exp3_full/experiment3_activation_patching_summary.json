@@ -1,0 +1,71 @@
+{
+  "experiment": "Experiment 3 - Causal intervention (activation patching)",
+  "metric_used_for_cie": "prototype drift score (hall similarity - faithful similarity), cosine fallback",
+  "total_experiments": 240,
+  "pairs_per_component_per_direction": 30,
+  "candidate_pool": {
+    "faithful": 180,
+    "hallucinated": 180
+  },
+  "component_results": [
+    {
+      "component": "Early attn heads (1\u201325%)",
+      "component_key": "early_attn_heads",
+      "cie_faithful_to_hallucinated": 1.6198555628458658e-05,
+      "p_faithful_to_hallucinated": 0.1519240379810095,
+      "n_faithful_to_hallucinated": 30,
+      "cie_hallucinated_to_faithful": -1.7142295837402345e-05,
+      "p_hallucinated_to_faithful": 1.0,
+      "n_hallucinated_to_faithful": 30,
+      "critical": false
+    },
+    {
+      "component": "Mid FFN layers (26\u201375%)",
+      "component_key": "mid_ffn_layers",
+      "cie_faithful_to_hallucinated": 0.002793593539132012,
+      "p_faithful_to_hallucinated": 0.01249375312343828,
+      "n_faithful_to_hallucinated": 30,
+      "cie_hallucinated_to_faithful": 0.0030926512347327338,
+      "p_hallucinated_to_faithful": 0.0004997501249375312,
+      "n_hallucinated_to_faithful": 30,
+      "critical": true
+    },
+    {
+      "component": "Late FFN layers (76\u2013100%)",
+      "component_key": "late_ffn_layers",
+      "cie_faithful_to_hallucinated": 0.004787151018778483,
+      "p_faithful_to_hallucinated": 0.0004997501249375312,
+      "n_faithful_to_hallucinated": 30,
+      "cie_hallucinated_to_faithful": 0.005296850204467773,
+      "p_hallucinated_to_faithful": 0.0004997501249375312,
+      "n_hallucinated_to_faithful": 30,
+      "critical": true
+    },
+    {
+      "component": "Copying heads (last 25%)",
+      "component_key": "copying_heads",
+      "cie_faithful_to_hallucinated": 0.0007008691628774007,
+      "p_faithful_to_hallucinated": 0.0004997501249375312,
+      "n_faithful_to_hallucinated": 30,
+      "cie_hallucinated_to_faithful": 0.0008241911729176839,
+      "p_hallucinated_to_faithful": 0.0029985007496251873,
+      "n_hallucinated_to_faithful": 30,
+      "critical": true
+    }
+  ],
+  "critical_components_count": 3,
+  "mark_readiness": {
+    "min_50_experiments": true,
+    "both_directions_reported": true,
+    "significant_in_at_least_two_components": true
+  },
+  "redeep_comparison_note": "Agreement with ReDeEP: late FFN appears critical.",
+  "top_component_by_f2h_cie": {
+    "component": "Late FFN layers (76\u2013100%)",
+    "cie": 0.004787151018778483
+  },
+  "method_notes": [
+    "Patching is done directly in hidden-state tensors from Person 1 artifacts.",
+    "Significance uses paired sign-flip permutation test around mean CIE delta."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "experiment6": {
+    "best_ffn_range": "Early (1-25%)",
+    "best_ffn_margin": 0.06500000000000006,
+    "subset_size": 80
+  },
+  "experiment7": {
+    "failure_cases_count_reported": 3,
+    "top_component_from_exp3": "Late FFN layers (76\u2013100%)"
+  },
+  "experiment8": {
+    "best_gap_closed": 0.3111606242401321,
+    "meets_50pct_threshold": false,
+    "improved_composite_auroc": 0.7140035087137252
+  }
+}
