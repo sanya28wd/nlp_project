@@ -1,104 +1,164 @@
-NLP Track B: Pre-Generation Causal Drift Metric
-This repository contains our Track B pipeline for hallucination detection using hidden-state representation metrics, causal patching, temporal precedence analysis, and zero-shot transfer evaluation.
+# Mechanistic Hallucination Detection in Language Models
 
-What This Repo Contains
-Exp 1 & 2: Composite AUROC on RAGTruth + layer localization
-Exp 3: Activation patching (causal intervention)
-Exp 4: Temporal precedence (t-3 to t+1)
-Exp 5: Cross-domain transfer to HaluEval (zero-shot)
-Exp 6–8: FFN vs attention decomposition, failure cases, SOTA gap analysis
+This repository contains an NLP research project focused on detecting and explaining hallucinations in language model outputs. Instead of only treating hallucination detection as a black-box classification task, the project studies internal model behavior through representation drift, logit-lens divergence, causal intervention effects, activation patching, and component-level analysis across attention and feed-forward layers.
 
-Environment
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+The work is built around benchmark-style hallucination datasets such as RAGTruth and HaluEval. It includes a reproducible artifact-generation pipeline, metric computation scripts, experiment reports, visualizations, and final result tables.
 
-Main Scripts
-scripts/exp1_generate_artifacts.py
-scripts/exp1_2_fit_train_stats.py
-scripts/exp1_2_compute_metrics.py
-scripts/build_exp12_table.py
-scripts/experiment3_activation_patching.py
-scripts/plot_experiment3_heatmap.py
-scripts/run_experiment4_temporal_precedence.py
-scripts/build_exp5_halueval_table.py
-scripts/build_exp6_8_analysis.py
+## Project Goal
 
-Reproduce Final Experiment Outputs
+Large language models can produce fluent answers that are not supported by the provided context. This project investigates whether hallucinated generations leave measurable traces inside model activations before or during answer generation.
 
-Exp 1 & 2
-python scripts/build_exp12_table.py \
-  --metrics-dir outputs/person2/metrics_full_gpt2medium_logitlens \
-  --splits-dir artifacts/person1_ragtruth_full_gpt2medium_pt/splits \
-  --out-csv "outputs/exp1&2/exp1_exp2_table_final.csv" \
-  --out-md "outputs/exp1&2/exp1_exp2_table_final.md" \
-  --out-layer-profile-png "outputs/exp1&2/E2_layer_profile.png" \
-  --out-layer-profile-csv "outputs/exp1&2/E2_layer_profile.csv"
-  
-Exp 3
-python scripts/experiment3_activation_patching.py \
-  artifacts/person1_ragtruth_full_gpt2medium_pt/model_outputs \
-  --output-dir outputs/exp3_full \
-  --pairs-per-component 30 \
-  --max-candidates-per-class 180 \
-  --save-details
+The core research questions are:
 
-python scripts/plot_experiment3_heatmap.py \
-  --summary-json outputs/exp3_full/experiment3_activation_patching_summary.json \
-  --out-png outputs/exp3_full/E3_component_layer_heatmap.png \
-  --out-csv outputs/exp3_full/E3_component_layer_heatmap.csv
+- Can internal representation metrics distinguish faithful and hallucinated answers?
+- Which model components carry the strongest hallucination-related signal?
+- Do hallucination signals appear before answer onset or only after the model starts generating unsupported text?
+- How well do mechanistic metrics transfer across hallucination benchmarks?
+- How close are lightweight internal-state metrics to stronger published hallucination detectors?
 
-  
-Exp 4
-python scripts/run_experiment4_temporal_precedence.py \
-  --input-dir artifacts/person1_ragtruth_full_gpt2medium_pt/model_outputs/test \
-  --stats-path outputs/person2/stats_full_gpt2medium_logitlens.pt \
-  --exp2-results-json "outputs/exp1&2/E1_E2_results.json" \
-  --model-name gpt2-medium \
+## What This Project Does
+
+The repository implements an end-to-end experimental workflow:
+
+1. Load and normalize raw hallucination datasets.
+2. Split samples into train, validation, and test manifests.
+3. Run language-model forward passes and save hidden-state/logit artifacts.
+4. Compute internal hallucination metrics from saved artifacts.
+5. Fit train-split statistics for representation-based scores.
+6. Evaluate metrics with AUROC, F1, Spearman correlation, and calibration error.
+7. Run mechanistic experiments such as activation patching and temporal analysis.
+8. Generate result tables, plots, and written experiment reports.
+
+## Main Techniques
+
+- **Attention entropy baseline**: Measures uncertainty through attention distribution entropy.
+- **Logit confidence baseline**: Uses top-token confidence as a simple uncertainty signal.
+- **Cosine drift**: Compares context and answer representations.
+- **Mahalanobis distance**: Scores answer representations against fitted faithful-answer statistics.
+- **PCA deviation**: Measures how far answer activations move from a learned representation subspace.
+- **Logit-lens divergence**: Tracks disagreement between intermediate-layer predictions and final logits.
+- **Causal intervention effect**: Estimates how much selected internal states affect hallucination-related behavior.
+- **Activation patching**: Tests whether replacing hidden states between faithful and hallucinated examples changes model behavior.
+- **FFN vs attention decomposition**: Separates feed-forward and attention contributions by layer range.
+- **Temporal precedence analysis**: Checks whether hallucination signals peak before answer onset.
+
+## Key Results
+
+The strongest RAGTruth result in the final table is a **CIE full composite AUROC of 0.7224**, outperforming the attention entropy baseline at **0.6661 AUROC**.
+
+From the final Exp1/Exp2 table:
+
+| Method | AUROC | F1 | Spearman | ECE |
+| --- | ---: | ---: | ---: | ---: |
+| Attention entropy baseline | 0.6661 | 0.6070 | 0.2843 | 0.0066 |
+| Logit confidence baseline | 0.6650 | 0.6087 | 0.2824 | 0.0137 |
+| Mahalanobis score | 0.6916 | 0.6159 | 0.3280 | 0.0363 |
+| PCA deviation | 0.6910 | 0.6135 | 0.3269 | 0.0180 |
+| Logit-lens divergence | 0.6536 | 0.6014 | 0.2628 | 0.0172 |
+| CIE full composite | 0.7224 | 0.6090 | 0.3807 | 0.0467 |
+
+Activation patching found that **mid FFN layers, late FFN layers, and copying heads** were significant in both patching directions. Late FFN layers had the strongest causal intervention effect, which supports the idea that hallucination-related behavior is strongly represented in feed-forward components rather than only attention heads.
+
+The temporal analysis found descriptive early peaks for Mahalanobis, logit-lens, and CIE metrics around `t-2`, although these peaks were not statistically significant at `p < 0.05`. This suggests promising but limited evidence for pre-onset hallucination signals.
+
+## Experiment Overview
+
+### Experiments 1 and 2: Metric Evaluation
+
+These experiments compare simple uncertainty baselines against representation-based and causal metrics. The final result table reports AUROC, F1, Spearman correlation, and expected calibration error on the held-out test split.
+
+### Experiment 3: Activation Patching
+
+This experiment patches hidden states in both directions:
+
+- faithful sample to hallucinated sample
+- hallucinated sample to faithful sample
+
+It reports causal intervention effects by component family. The experiment includes 240 total patching runs and identifies mid FFN, late FFN, and copying-head components as significant.
+
+### Experiment 4: Temporal Precedence
+
+This experiment measures hallucination signals around answer onset from `t-3` through `t+1`. It tests whether internal drift appears before unsupported generation begins.
+
+### Experiment 5: HaluEval Transfer
+
+This experiment evaluates whether metrics trained or selected on one hallucination setting transfer to HaluEval tasks such as QA, dialogue, summarization, and general generation.
+
+### Experiments 6-8: Component Localization, Failure Cases, and SOTA Gap
+
+These experiments decompose attention and FFN drift, inspect qualitative failure cases, and compare the current approach against stronger published hallucination detectors such as ReDeEP and LUMINA.
+
+## Repository Structure
+
+```text
+.
+├── data/                         # Raw and converted benchmark data
+├── outputs/                      # Experiment tables, plots, summaries, and reports
+├── person2/                      # Saved metric artifacts and fitted statistics
+├── scripts/                      # Experiment runners and analysis scripts
+├── src/nlp_track_b/person1/      # Data loading, formatting, model forward pipeline
+├── src/nlp_track_b/person2/      # Metric computation and artifact utilities
+├── tests/                        # Existing pipeline tests
+├── pyproject.toml                # Python project metadata and dependencies
+└── requirements.txt              # Dependency list
+```
+
+## Example Commands
+
+Generate model artifacts from a JSONL dataset:
+
+```bash
+python scripts/exp1_generate_artifacts.py \
+  --dataset data/ragtruth/raw_subset.jsonl \
+  --output-dir outputs/example_run \
+  --provider mock \
+  --save-format pt
+```
+
+Use a Hugging Face model backend:
+
+```bash
+python scripts/exp1_generate_artifacts.py \
+  --dataset data/ragtruth/raw_subset.jsonl \
+  --output-dir outputs/hf_run \
+  --provider hf \
+  --model-name distilgpt2 \
   --device auto \
-  --logit-lens-mode exact_full \
-  --output-dir outputs/exp4_temporal_precedence
+  --compact-output \
+  --save-format pt
+```
 
-  
-Exp 5 (Primary: dialogue + qa + summarization)
-python scripts/build_exp5_halueval_table.py \
-  --ragtruth-metrics-dir outputs/person2/metrics_full_gpt2medium_logitlens \
-  --halueval-metrics-dir outputs/person2/metrics_halueval_gpt2medium_logitlens \
-  --ragtruth-splits-dir artifacts/person1_ragtruth_full_gpt2medium_pt/splits \
-  --halueval-split-path artifacts/person1_halueval_gpt2medium_pt/splits/test.jsonl \
-  --halueval-tasks dialogue,qa,summarization \
-  --out-csv outputs/exp5_halueval/experiment5_halueval_transfer_table.csv \
-  --out-md outputs/exp5_halueval/experiment5_halueval_transfer_table.md \
-  --out-summary outputs/exp5_halueval/experiment5_halueval_transfer_summary.json
+Build the final Exp1/Exp2 table:
 
-  
-Exp 6–8
-python scripts/build_exp6_8_analysis.py \
-  --metrics-dir outputs/person2/metrics_full_gpt2medium_logitlens \
-  --splits-dir artifacts/person1_ragtruth_full_gpt2medium_pt/splits \
-  --artifacts-dir artifacts/person1_ragtruth_full_gpt2medium_pt/model_outputs/test \
-  --exp3-summary outputs/exp3_full/experiment3_activation_patching_summary.json \
-  --exp2-json "outputs/exp1&2/E1_E2_results.json" \
-  --output-dir outputs/exp6_8_analysis
-Final Reported Numbers
-RAGTruth headline composite AUROC: 0.7224
-HaluEval transfer composite AUROC (3-task combined): 0.6663
-Attention-entropy baseline AUROC: 0.6661
+```bash
+python scripts/build_exp12_table.py
+```
 
-outputs:
+Run activation patching:
 
-outputs/final_results_summary.json
-outputs/final_results_summary.md
-Output Folders (Submission)
-outputs/exp1&2/
-outputs/exp3_full/
-outputs/exp4_temporal_precedence/
-outputs/exp5_halueval/
-outputs/exp6_8_analysis/
-outputs/final_results_summary.json
-outputs/final_results_summary.md
+```bash
+python scripts/experiment3_activation_patching.py
+```
 
-Notes
-artifacts/ is large and treated as intermediate generation data.
-outputs/person2/ contains intermediate metric/stats artifacts used to build final experiment outputs.
-For Exp 5 primary reporting, general is excluded; it is kept as optional stress-test analysis.
+Run temporal precedence analysis:
+
+```bash
+python scripts/run_experiment4_temporal_precedence.py
+```
+
+## Tech Stack
+
+- Python 3.12+
+- PyTorch
+- NumPy
+- pandas
+- scikit-learn
+- SciPy
+- Matplotlib
+- Hugging Face-compatible model execution path
+
+## Why This Project Is Interesting
+
+Most hallucination detectors focus on output text, retrieval overlap, or external verification. This project instead asks whether hallucinations are visible inside the model's own computation. By combining benchmark evaluation with mechanistic interpretability methods, it provides both detection scores and component-level explanations.
+
+The result is a research-oriented codebase that connects practical hallucination detection with deeper analysis of where hallucination-related signals appear inside transformer models.

@@ -12,6 +12,4 @@
 | CIE full composite | 0.722404 | 0.608974 | 0.380667 | 0.046700 |
 
 Notes:
-- Baseline attention/logit-confidence are NA because compact Person1 artifacts in this run do not retain recoverable attention distributions / token-level logit confidences for all samples.
-- If exact baseline JSON files exist (attention/logit confidence), they are used automatically.
 - ECE for metric rows uses isotonic calibration fit on train split, evaluated on test split.

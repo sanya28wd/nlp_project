@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+**/__pycache__/
+
+# Virtual environments
+.venv/
+venv/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Logs / temp
+*.log
+*.tmp
+
+# Large local generated artifacts that should not be committed to GitHub
+artifacts/
+person2/
+data/ragtruth/raw.jsonl
+data/ragtruth/raw_1k.jsonl
+data/ragtruth/raw_subset.jsonl
+
+# Keep the lightweight repo data needed for tests and reproducibility
+!data/sample/
+!data/sample/**
+!data/halueval/
+!data/halueval/**
+!data/RAGTruth-main/
+!data/RAGTruth-main/**
+!outputs/
+!outputs/**

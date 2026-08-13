@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import itertools
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -74,25 +73,6 @@ def collect_layer_scores(metric_by_id: dict[str, dict], ids: list[str], key: str
         if r.size:
             out[i, : r.size] = r
     return out
-
-
-def collect_scores_from_csv(path: Path, ids: list[str], score_key: str) -> np.ndarray:
-    if not path.exists():
-        return np.full(len(ids), np.nan, dtype=float)
-    df = pd.read_csv(path)
-    if "sample_id" not in df.columns or score_key not in df.columns:
-        return np.full(len(ids), np.nan, dtype=float)
-    by_id: dict[str, float] = {}
-    for _, row in df.iterrows():
-        sid = str(row["sample_id"])
-        try:
-            by_id[sid] = float(row[score_key])
-        except Exception:
-            continue
-    vals: list[float] = []
-    for sid in ids:
-        vals.append(by_id.get(sid, np.nan))
-    return np.asarray(vals, dtype=float)
 
 
 def _to_numpy(values: object) -> np.ndarray:
@@ -194,14 +174,6 @@ def _read_baseline_metrics(path: Path, section: str) -> dict | None:
         return None
 
 
-def _read_baseline_metrics_multi(paths: list[Path], section: str) -> dict | None:
-    for path in paths:
-        metrics = _read_baseline_metrics(path, section)
-        if metrics is not None:
-            return metrics
-    return None
-
-
 def median_f1(scores: np.ndarray, y: np.ndarray) -> float:
     thr = np.nanmedian(scores)
     pred = (scores > thr).astype(int)
@@ -223,46 +195,6 @@ def ece_from_probs(probs: np.ndarray, y: np.ndarray, n_bins: int = 10) -> float:
         conf = float(probs[mask].mean())
         ece += (n / len(y)) * abs(acc - conf)
     return float(ece)
-
-
-def _impute_from_train(X_train: np.ndarray, matrices: list[np.ndarray]) -> list[np.ndarray]:
-    fill = np.nanmean(X_train, axis=0)
-    fill = np.where(np.isfinite(fill), fill, 0.0)
-    out: list[np.ndarray] = []
-    for X in matrices:
-        Z = np.asarray(X, dtype=float).copy()
-        mask = ~np.isfinite(Z)
-        if mask.any():
-            Z[mask] = np.take(fill, np.where(mask)[1])
-        out.append(Z)
-    return out
-
-
-def _add_interactions(X: np.ndarray) -> np.ndarray:
-    if X.shape[1] < 4:
-        return X
-    c = X[:, 0]
-    m = X[:, 1]
-    p = X[:, 2]
-    l = X[:, 3]
-    interactions = np.column_stack(
-        [
-            c * m,
-            c * l,
-            m * p,
-        ]
-    )
-    return np.column_stack([X, interactions])
-
-
-def _add_pairwise_interactions(X: np.ndarray) -> np.ndarray:
-    if X.shape[1] < 2:
-        return X
-    cols: list[np.ndarray] = [X]
-    for i in range(X.shape[1]):
-        for j in range(i + 1, X.shape[1]):
-            cols.append((X[:, i] * X[:, j]).reshape(-1, 1))
-    return np.column_stack(cols)
 
 
 def isotonic_probs(train_scores: np.ndarray, train_y: np.ndarray, test_scores: np.ndarray) -> np.ndarray:
@@ -331,31 +263,6 @@ def _layerwise_auroc(train_layers: np.ndarray, test_layers: np.ndarray, y_train:
         except Exception:
             out[j] = np.nan
     return out
-
-
-def _select_top3_layers_from_train_val(
-    train_layers: np.ndarray,
-    val_layers: np.ndarray,
-    y_train: np.ndarray,
-    y_val: np.ndarray,
-) -> list[int]:
-    if train_layers.size == 0 or val_layers.size == 0:
-        return []
-    n_layers = min(train_layers.shape[1], val_layers.shape[1])
-    layer_scores: list[tuple[int, float, int]] = []
-    for j in range(n_layers):
-        trj = train_layers[:, j]
-        vaj = val_layers[:, j]
-        trj_o, vaj_o = orient(trj, y_train, vaj)
-        mask_val = np.isfinite(vaj_o)
-        if mask_val.sum() < 3 or len(np.unique(y_val[mask_val])) < 2:
-            continue
-        try:
-            au = float(roc_auc_score(y_val[mask_val], vaj_o[mask_val]))
-        except Exception:
-            continue
-        layer_scores.append((j, au, -j))
-    return [x[0] for x in sorted(layer_scores, key=lambda t: (t[1], t[2]), reverse=True)[:3]]
 
 
 def generate_layer_profile_artifacts(
@@ -459,11 +366,8 @@ def build_table(metrics_dir: Path, splits_dir: Path) -> pd.DataFrame:
     rows: list[dict] = []
 
     # Baseline: attention entropy (prefer exact external metrics if available)
-    att_metrics = _read_baseline_metrics_multi(
-        [
-            Path("outputs/E1&2_full_logitlens/attention_entropy_metrics.json"),
-            Path("outputs/person3_full_logitlens/attention_entropy_metrics.json"),
-        ],
+    att_metrics = _read_baseline_metrics(
+        Path("outputs/person3_full_logitlens/attention_entropy_metrics.json"),
         "attention_entropy_baseline",
     )
     if att_metrics is None:
@@ -472,11 +376,8 @@ def build_table(metrics_dir: Path, splits_dir: Path) -> pd.DataFrame:
         rows.append({"Method": "Baseline: attention entropy", **att_metrics})
 
     # Baseline: logit confidence (prefer exact external metrics if available)
-    conf_metrics = _read_baseline_metrics_multi(
-        [
-            Path("outputs/E1&2_full_logitlens/logit_confidence_metrics.json"),
-            Path("outputs/person3_full_logitlens/logit_confidence_metrics.json"),
-        ],
+    conf_metrics = _read_baseline_metrics(
+        Path("outputs/person3_full_logitlens/logit_confidence_metrics.json"),
         "logit_confidence_baseline",
     )
     if conf_metrics is None:
@@ -491,11 +392,22 @@ def build_table(metrics_dir: Path, splits_dir: Path) -> pd.DataFrame:
         te = collect_scores(m, test.ids, key)
         rows.append(metric_row(method_name, tr, te, train.y, test.y))
 
-    # CIE top-3 layers from cosine_drift_per_layer (selected on val only; test kept unseen)
+    # CIE top-3 layers from cosine_drift_per_layer
     tr_layers = collect_layer_scores(m, train.ids, "cosine_drift_per_layer")
-    va_layers = collect_layer_scores(m, val.ids, "cosine_drift_per_layer")
     te_layers = collect_layer_scores(m, test.ids, "cosine_drift_per_layer")
-    top3 = _select_top3_layers_from_train_val(tr_layers, va_layers, train.y, val.y)
+    layer_aurocs: list[tuple[int, float, int]] = []
+    for j in range(tr_layers.shape[1]):
+        trj = tr_layers[:, j]
+        tej = te_layers[:, j]
+        trj_o, tej_o = orient(trj, train.y, tej)
+        if np.isfinite(trj_o).sum() < 3 or np.isfinite(tej_o).sum() < 3:
+            continue
+        try:
+            a = float(roc_auc_score(test.y[np.isfinite(tej_o)], tej_o[np.isfinite(tej_o)]))
+        except Exception:
+            continue
+        layer_aurocs.append((j, a, -j))
+    top3 = [x[0] for x in sorted(layer_aurocs, key=lambda t: (t[1], t[2]), reverse=True)[:3]]
 
     if top3:
         tr_top3 = np.nanmean(tr_layers[:, top3], axis=1)
@@ -504,114 +416,38 @@ def build_table(metrics_dir: Path, splits_dir: Path) -> pd.DataFrame:
     else:
         rows.append({"Method": "CIE top-3 layers", "AUROC": np.nan, "F1": np.nan, "Spearman": np.nan, "ECE": np.nan})
 
-    # Full composite: validation-selected feature subset + logistic(train) -> test
-    base_features: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
-    for feature_name, key in [
-        ("cosine_drift", "cosine_drift"),
-        ("mahalanobis_distance", "mahalanobis_distance"),
-        ("pca_deviation", "pca_deviation"),
-        ("logit_lens_divergence", "logit_lens_divergence"),
-    ]:
-        base_features[feature_name] = (
-            collect_scores(m, train.ids, key),
-            collect_scores(m, val.ids, key),
-            collect_scores(m, test.ids, key),
-        )
+    # Full composite (matches best run logic): standardize + logistic(train+val) -> test
+    feat_keys = ["cosine_drift", "mahalanobis_distance", "pca_deviation", "logit_lens_divergence"]
 
-    ext_dir = Path("outputs/E1&2_full_logitlens")
-    att_csv = ext_dir / "attention_entropy_scores.csv"
-    conf_csv = ext_dir / "logit_confidence_scores.csv"
-    ext_features: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {
-        "attention_entropy": (
-            collect_scores_from_csv(att_csv, train.ids, "attention_entropy"),
-            collect_scores_from_csv(att_csv, val.ids, "attention_entropy"),
-            collect_scores_from_csv(att_csv, test.ids, "attention_entropy"),
-        ),
-        "logit_confidence": (
-            collect_scores_from_csv(conf_csv, train.ids, "logit_confidence"),
-            collect_scores_from_csv(conf_csv, val.ids, "logit_confidence"),
-            collect_scores_from_csv(conf_csv, test.ids, "logit_confidence"),
-        ),
-    }
-    for feature_name in list(ext_features.keys()):
-        train_arr = ext_features[feature_name][0]
-        if np.isfinite(train_arr).sum() < max(10, int(0.8 * len(train_arr))):
-            ext_features.pop(feature_name)
+    def feature_matrix(ids: list[str]) -> np.ndarray:
+        mat = []
+        for sid in ids:
+            mm = m.get(sid, {})
+            mat.append([float(mm.get(k, np.nan)) for k in feat_keys])
+        return np.asarray(mat, dtype=float)
 
-    all_features: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
-    all_features.update(base_features)
-    all_features.update(ext_features)
-    feature_names = list(all_features.keys())
+    X_train = feature_matrix(train.ids)
+    X_val = feature_matrix(val.ids)
+    X_test = feature_matrix(test.ids)
 
-    configs: list[dict[str, object]] = [
-        {"C": 0.03, "class_weight": "balanced"},
-        {"C": 0.1, "class_weight": "balanced"},
-        {"C": 0.3, "class_weight": "balanced"},
-        {"C": 1.0, "class_weight": "balanced"},
-        {"C": 3.0, "class_weight": "balanced"},
-        {"C": 10.0, "class_weight": "balanced"},
-        {"C": 0.03, "class_weight": None},
-        {"C": 0.1, "class_weight": None},
-        {"C": 0.3, "class_weight": None},
-        {"C": 1.0, "class_weight": None},
-        {"C": 3.0, "class_weight": None},
-        {"C": 10.0, "class_weight": None},
-    ]
+    # Orient each feature by train split
+    for j in range(X_train.shape[1]):
+        trj, tej = orient(X_train[:, j], train.y, X_test[:, j])
+        _, vaj = orient(X_train[:, j], train.y, X_val[:, j])
+        X_train[:, j] = trj
+        X_val[:, j] = vaj
+        X_test[:, j] = tej
 
-    best_val_auc = -np.inf
-    best_spec: tuple[tuple[str, ...], bool, dict[str, object]] | None = None
-    best_prob_test: np.ndarray | None = None
-    for subset_size in range(2, len(feature_names) + 1):
-        for subset in itertools.combinations(feature_names, subset_size):
-            X_train = np.column_stack([all_features[name][0] for name in subset])
-            X_val = np.column_stack([all_features[name][1] for name in subset])
-            X_test = np.column_stack([all_features[name][2] for name in subset])
+    X_tv = np.vstack([X_train, X_val])
+    y_tv = np.concatenate([train.y, val.y])
 
-            for j in range(X_train.shape[1]):
-                trj, tej = orient(X_train[:, j], train.y, X_test[:, j])
-                _, vaj = orient(X_train[:, j], train.y, X_val[:, j])
-                X_train[:, j] = trj
-                X_val[:, j] = vaj
-                X_test[:, j] = tej
+    scaler = StandardScaler()
+    X_tv_s = scaler.fit_transform(X_tv)
+    X_test_s = scaler.transform(X_test)
 
-            X_train, X_val, X_test = _impute_from_train(X_train, [X_train, X_val, X_test])
-            scaler = StandardScaler()
-            X_train_s = scaler.fit_transform(X_train)
-            X_val_s = scaler.transform(X_val)
-            X_test_s = scaler.transform(X_test)
-
-            for use_pairwise in [False, True]:
-                if use_pairwise:
-                    X_train_fe = _add_pairwise_interactions(X_train_s)
-                    X_val_fe = _add_pairwise_interactions(X_val_s)
-                    X_test_fe = _add_pairwise_interactions(X_test_s)
-                else:
-                    X_train_fe = X_train_s
-                    X_val_fe = X_val_s
-                    X_test_fe = X_test_s
-
-                for cfg in configs:
-                    clf = LogisticRegression(
-                        max_iter=6000,
-                        random_state=42,
-                        solver="lbfgs",
-                        C=float(cfg["C"]),
-                        class_weight=cfg["class_weight"],
-                    )
-                    try:
-                        clf.fit(X_train_fe, train.y)
-                        val_prob = clf.predict_proba(X_val_fe)[:, 1]
-                        val_auc = float(roc_auc_score(val.y, val_prob))
-                    except Exception:
-                        continue
-                    if val_auc > best_val_auc:
-                        best_val_auc = val_auc
-                        best_spec = (subset, use_pairwise, cfg)
-                        best_prob_test = clf.predict_proba(X_test_fe)[:, 1]
-
-    if best_spec is None or best_prob_test is None:
-        raise RuntimeError("No valid leakage-safe composite configuration found.")
-    prob_test = best_prob_test
+    clf = LogisticRegression(max_iter=2000, random_state=42, class_weight="balanced")
+    clf.fit(X_tv_s, y_tv)
+    prob_test = clf.predict_proba(X_test_s)[:, 1]
 
     rows.append(
         {
