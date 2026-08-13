@@ -20,7 +20,7 @@ Significance details:
 
 Checklist against rubric:
 
-- Both patching directions reported: Yes
+- Both patching directions reported
 - Minimum 50 experiments: Yes (`240` total)
 - CIE significant in at least 2 components (`p < 0.05`): Yes (`mid FFN`, `late FFN`, `copying heads`)
 - ReDeEP comparison written: Yes

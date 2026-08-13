@@ -65,7 +65,7 @@
     "cie": 0.004787151018778483
   },
   "method_notes": [
-    "Patching is done directly in hidden-state tensors from Person 1 artifacts.",
+    "Patching is done directly in hidden-state tensors ",
     "Significance uses paired sign-flip permutation test around mean CIE delta."
   ]
 }

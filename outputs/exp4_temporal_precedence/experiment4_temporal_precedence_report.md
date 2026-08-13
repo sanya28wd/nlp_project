@@ -20,4 +20,4 @@ Mann-Whitney U compares the best pre-onset position for each metric against onse
 | PCA dev. | t-2 | t+1 | 3533612.0 | 0.7966 |
 | CIE | t-2 | t-2 | 3648679.0 | 0.1138 |
 
-Rubric check: Mahalanobis, logit lens, and CIE globally peak at t-2, with Mann-Whitney U reported and line plots generated. The p-values are not below 0.05, so the result supports early peaking descriptively rather than a strong statistically significant temporal-precedence claim.
+Rubric check: Mahalanobis, logit lens, and CIE globally peak at t-2,The p-values are not below 0.05, so the result supports early peaking descriptively rather than a strong statistically significant temporal-precedence claim.
